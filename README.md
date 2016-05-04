@@ -1,4 +1,4 @@
-Flash the firmware with the Arduino IDE with the ESP8266 toolset.
+## ESP8266 Telemetry
 
 With this firmware, you can use an ESP8266 WiFi module for telemetry in PaparazziUAV. At this moment, it works only as a client that connects to a Hotspot. For example, you can have the ESP module connect to the same router as your computer. Another option is to have a WiFi Dongle in the computer that is configured as a hotspot.
 
