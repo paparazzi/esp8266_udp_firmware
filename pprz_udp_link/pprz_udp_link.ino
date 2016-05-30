@@ -3,6 +3,7 @@
 #include "wifi_config.h"
 
 #define PPRZ_STX 0x99
+#define LED_PIN 13
 
 /* PPRZ message parser states */
 enum normal_parser_states {
@@ -38,6 +39,10 @@ IPAddress myIP;
 
 void setup() {
   delay(1000);
+  /* Configure LED */
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
+  
   Serial.begin(115200);
   //Serial.println();
   //Serial.print("Connnecting to ");
@@ -47,11 +52,15 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     //Serial.print(".");
+    /* Toggle LED */
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
   }
   myIP = WiFi.localIP();
   //Serial.println(myIP);
 
   udp.begin(localPort);
+  /* Connected, LED ON */
+  digitalWrite(LED_PIN, HIGH);
 }
 
 void loop() {
@@ -67,6 +76,7 @@ void loop() {
   /* Check for Serial data from drone */
   /* Put all serial in_bytes in a buffer */
   while(Serial.available() > 0) {
+    digitalWrite(LED_PIN, LOW);
     unsigned char inbyte = Serial.read();
     if (parse_single_byte(inbyte)) { // if complete message detected
       udp.beginPacketMulticast(broadcastIP, txPort, myIP);
@@ -75,6 +85,7 @@ void loop() {
     }
   }
   delay(10);
+  digitalWrite(LED_PIN, HIGH);
 }
 
 /*
