@@ -76,7 +76,8 @@ void setup() {
     WiFi.softAP(ssid, password);
     myIP = WiFi.softAPIP();
     /* Reconfigure broadcast IP */
-    IPAddress broadcastIP(192,168,4,255);
+    IPAddress AP_broadcastIP(192,168,4,255);
+    broadcastIP = AP_broadcastIP;
   }
   
   if (serial_connect_info) {

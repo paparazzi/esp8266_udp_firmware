@@ -13,5 +13,5 @@ unsigned int txPort    = 4242; // port to transmit data on
 
 /* Over The Air (OTA) update command */
 /*
-python ~/.arduino15/packages/esp8266/hardware/esp8266/2.1.0/tools/espota.py -i esp00-123.local -r -f /home/bart/Arduino/BasicOTA_AP_TEST/BasicOTA_AP_TEST.cpp.nodemcu.bin
+python ~/.arduino15/packages/esp8266/hardware/esp8266/2.1.0/tools/espota.py -i esp-module.local -r -f /home/bart/git/esp8266_udp_firmware/pprz_udp_link/pprz_udp_link.cpp.generic.bin
 */
