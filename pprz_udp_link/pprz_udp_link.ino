@@ -121,6 +121,10 @@ void setup() {
 }
 
 void loop() {
+  
+  /* Check for OTA */
+  ArduinoOTA.handle();
+
   /* Check for UDP data from host */
   int packetSize = udp.parsePacket();
   int len = 0;
@@ -141,9 +145,6 @@ void loop() {
       udp.endPacket();
     }
   }
-
-  /* Check for OTA */
-  ArduinoOTA.handle();
   
   delay(10);
   digitalWrite(LED_PIN, HIGH);
