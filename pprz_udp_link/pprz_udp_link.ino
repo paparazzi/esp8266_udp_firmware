@@ -9,7 +9,7 @@ enum wifi_modes {
 } wifi_mode = WifiModeAccessPoint;
 
 #define PPRZ_STX 0x99
-#define LED_PIN LED_BUILTIN
+#define LED_PIN 13
 
 /* PPRZ message parser states */
 enum normal_parser_states {
