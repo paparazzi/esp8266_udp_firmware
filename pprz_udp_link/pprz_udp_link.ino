@@ -2,8 +2,14 @@
 #include <WiFiUdp.h>
 #include "wifi_config.h"
 
+/* Struct with available modes */
+enum wifi_modes {
+  WifiModeClient,
+  WifiModeAccessPoint
+} wifi_mode = WifiModeAccessPoint;
+
 #define PPRZ_STX 0x99
-#define LED_PIN 13
+#define LED_PIN LED_BUILTIN
 
 /* PPRZ message parser states */
 enum normal_parser_states {
@@ -32,31 +38,48 @@ struct normal_parser_t parser;
 char packetBuffer[255]; //buffer to hold incoming packet
 char outBuffer[255];    //buffer to hold outgoing data
 uint8_t out_idx = 0;
+uint8_t serial_connect_info = 1; // Serial print wifi connection info
 
 WiFiUDP udp;
 
 IPAddress myIP;
 
 void setup() {
+  wifi_mode = WIFI_MODE;
   delay(1000);
   /* Configure LED */
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
   
   Serial.begin(115200);
-  //Serial.println();
-  //Serial.print("Connnecting to ");
-  //Serial.println(ssid);
-  WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    //Serial.print(".");
-    /* Toggle LED */
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+  if (serial_connect_info) {
+    Serial.println();
+    Serial.print("Connnecting to ");
+    Serial.println(ssid);
   }
-  myIP = WiFi.localIP();
-  //Serial.println(myIP);
+  if (wifi_mode == WifiModeClient) {
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      if (serial_connect_info) {
+        Serial.print(".");
+      }
+      /* Toggle LED */
+      digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+    }
+    myIP = WiFi.localIP();
+  }
+  else {
+    /* AccessPoint mode */
+    WiFi.softAP(ssid, password);
+    myIP = WiFi.softAPIP();
+    /* Reconfigure broadcast IP */
+    IPAddress broadcastIP(192,168,4,255);
+  }
+  
+  if (serial_connect_info) {
+    Serial.println(myIP);
+  }
 
   udp.begin(localPort);
   /* Connected, LED ON */
