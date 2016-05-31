@@ -1,5 +1,5 @@
 /* Configure the network you want to connect to. */
-#define WIFI_MODE WifiModeAccessPoint;  // Either WifiModeClient or WifiModeAccessPoint
+#define WIFI_MODE WifiModeClient;  // Either WifiModeClient or WifiModeAccessPoint
 const char *ssid = "********";
 const char *password = "********"; // In AccessPoint Mode, must be AT LEAST 8 characters long.
 
