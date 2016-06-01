@@ -1,6 +1,13 @@
+
+<img src="pictures/pico-esp.jpg" alt="pico_esp" width="500"/>
+
 ## ESP8266 Telemetry
 
 With this firmware, you can use an ESP8266 WiFi module for telemetry in PaparazziUAV. At this moment, it works only as a client that connects to a Hotspot. For example, you can have the ESP module connect to the same router as your computer. Another option is to have a WiFi Dongle in the computer that is configured as a hotspot.
+
+## Wiki
+
+Module-specific documentation can be found in the [wiki](https://github.com/paparazzi/esp8266_udp_firmware/wiki).
 
 ## Required tools
 
