@@ -1,7 +1,7 @@
 /* Configure the network you want to connect to. */
 #define WIFI_MODE WifiModeClient;  // Either WifiModeClient or WifiModeAccessPoint
-const char *ssid = "********";
-const char *password = "********"; // In AccessPoint Mode, must be AT LEAST 8 characters long.
+const char *ssid = "e540";
+const char *password = "LHlqaSgu"; // In AccessPoint Mode, must be AT LEAST 8 characters long.
 
 /* The broadcast IP, can be obtained with the ifconfig command in Linux */
 IPAddress broadcastIP(192,168,255,255); // Only required in WifiModeClient

@@ -2,7 +2,14 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <Wire.h>
 #include "wifi_config.h"
+
+/* Magnetometer defines */
+#define HMC5883           0x1E     // 7-bit R/W I2C address for The HMC5883
+#define MODE_REGISTER     0x02     // HMC8553's Mode Register address
+#define X_MSB_REGISTER    0x03     // HMC8553's Data Output X-MSB Register
+#define CONT_MEASURE_MODE 0x00     // Continuous-measurement Mode
 
 /* Struct with available modes */
 enum wifi_modes {
@@ -11,7 +18,7 @@ enum wifi_modes {
 } wifi_mode = WifiModeAccessPoint;
 
 #define PPRZ_STX 0x99
-#define LED_PIN 13
+#define LED_PIN BUILTIN_LED // change back to 13
 
 /* PPRZ message parser states */
 enum normal_parser_states {
@@ -88,7 +95,7 @@ void setup() {
 
 
   /* OTA Configuration */
-
+  /*
   // Port defaults to 8266
   // ArduinoOTA.setPort(8266);
 
@@ -116,15 +123,30 @@ void setup() {
     else if (error == OTA_END_ERROR) Serial.println("End Failed");
   });
   ArduinoOTA.begin();
+  */
 
   /* Connected, LED ON */
-  digitalWrite(LED_PIN, HIGH);  
+  digitalWrite(LED_PIN, HIGH);
+
+  /* Magnetometer setup */
+  Wire.begin(0,2);
+  Wire.beginTransmission(HMC5883);
+  Wire.write(MODE_REGISTER);       // Set the HMC8553's address pointer to the Mode Register
+  Wire.write(CONT_MEASURE_MODE);   // Set the Mode Register to Continuous-measurement Mode
+  Wire.endTransmission();
 }
 
 void loop() {
+  /* Every 5th cycle, read magneto */
+  static uint8_t mag_cnt = 0;
+  if (mag_cnt == 5) {
+    mag_cnt = 0;
+    send_magneto_data();
+  }
+  ++mag_cnt;
   
   /* Check for OTA */
-  ArduinoOTA.handle();
+  //ArduinoOTA.handle();
 
   /* Check for UDP data from host */
   int packetSize = udp.parsePacket();
@@ -147,7 +169,7 @@ void loop() {
     }
   }
   
-  delay(10);
+  delay(2);
   digitalWrite(LED_PIN, HIGH);
 }
 
@@ -256,4 +278,60 @@ uint8_t parse_single_byte(unsigned char in_byte)
   
   outBuffer[out_idx++] = in_byte;
   return 0;
+}
+
+
+uint8_t mag_crc_a;
+uint8_t mag_crc_b;
+uint8_t mag_byte(uint8_t in_byte) {
+  mag_crc_a += in_byte;
+  mag_crc_b += mag_crc_a;
+  return in_byte;
+}
+
+/** Read and send magneto message
+ *  This is hacked into the HTIL_INFRARED messages
+ *  which is almost perfect in data types.
+ * 
+ * PPRZ-message: ABCxxxxxxxDE
+    A PPRZ_STX (0x99)
+    B LENGTH (A->E)
+    C PPRZ_DATA
+      0 SENDER_ID
+      1 MSG_ID
+      2 MSG_PAYLOAD
+      . DATA (messages.xml)
+    D PPRZ_CHECKSUM_A (sum[B->C])
+    E PPRZ_CHECKSUM_B (sum[ck_a])
+ */
+void send_magneto_data(){
+  uint8_t mag_msg[13];
+  mag_crc_a = 0;
+  mag_crc_b = 0;
+  
+  mag_msg[0] = PPRZ_STX;
+  mag_msg[1] = mag_byte(13);
+  mag_msg[2] = mag_byte(0);
+  mag_msg[3] = mag_byte(7); // MSG HITL_INFRARED
+
+  Wire.beginTransmission(HMC5883);
+  Wire.write(X_MSB_REGISTER);      // Set address pointer to the 1st data-output register
+  Wire.endTransmission();
+
+  // Read in the 6 bytes of data and convert it to 3 integers representing x, y and z
+  Wire.requestFrom(HMC5883, 6);
+  if (Wire.available() == 6){
+    mag_msg[4] = mag_byte(Wire.read());         // X-MSB
+    mag_msg[5] = mag_byte(Wire.read());         // X-LSB
+    mag_msg[6] = mag_byte(Wire.read());         // Y-MSB
+    mag_msg[7] = mag_byte(Wire.read());         // Y-LSB
+    mag_msg[8] = mag_byte(Wire.read());         // Z-MSB
+    mag_msg[9] = mag_byte(Wire.read());         // Z-LSB
+
+    mag_msg[10] = mag_byte(0); // unused byte of HITL_INFRARED (ac_id)
+    mag_msg[11] = mag_crc_a;
+    mag_msg[12] = mag_crc_b;
+
+    Serial.write(mag_msg, 13);
+  }
 }
