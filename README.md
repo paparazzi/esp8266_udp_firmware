@@ -3,8 +3,10 @@
 [esp8266 project on github](https://github.com/esp8266/Arduino)
 
 
-<img src="pictures/pico-esp.jpg" alt="pico_esp" width="300"/>
-<img src="pictures/ESP8266_09_bottom.png"  alt="ESP09" width="300"/>
+<img src="pictures/pico-esp.jpg" alt="pico_esp" height="200" width="200"/>
+<img src="pictures/ESP8266_09_bottom.png"  alt="ESP09 Bottom" height="200" width="200"/>
+<img src="pictures/ESP8266_09_top.png"  alt="ESP09 Top" height="200" width="200"/>
+<img src="pictures/ESP_09_READY.jpg"  alt="ESP09 Assembly" height="200" width="200"/>
 
 ## ESP8266 Telemetry
 
@@ -12,7 +14,8 @@ With this firmware, you can use an ESP8266 WiFi module for telemetry in Paparazz
 
 ## Wiki
 
-Module-specific documentation can be found in the [wiki](https://github.com/paparazzi/esp8266_udp_firmware/wiki).
+- Documentation of the PICO-ESP can be found: [PicoEsp wiki](https://github.com/paparazzi/esp8266_udp_firmware/wiki).
+- Information about the ESP8266 chip and arduino tools: [esp8266 wiki](https://github.com/esp8266/esp8266-wiki/wiki)
 
 ## Required tools
 
