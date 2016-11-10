@@ -47,6 +47,9 @@ If you are using a different serial port, change `UART1` accordingly.
 - Replace the command line options with "~/paparazzi/sw/ground_segment/tmtc/link  **-udp**".
 - Enjoy telemetry!
 
+## Documentation
+
+
 ## Suggestions for improvement
 
 Instead of flashing the module with a fixed SSID and password, it would be nice to have this configurable from the autopilot. Upon startup, the ESP8266 could send out requests for the SSID and password. A module within PPRZ could react by providing this in a PPRZ message format.
