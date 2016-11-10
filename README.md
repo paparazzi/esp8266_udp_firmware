@@ -3,7 +3,8 @@
 [esp8266 project on github](https://github.com/esp8266/Arduino)
 
 
-<img src="pictures/pico-esp.jpg" alt="pico_esp" width="500"/>
+<img src="pictures/pico-esp.jpg" alt="pico_esp" width="300"/>
+<img src="pictures/ESP8266_09_bottom.png"  alt="ESP09" width="300"/>
 
 ## ESP8266 Telemetry
 
