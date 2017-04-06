@@ -20,7 +20,7 @@ With this firmware, you can use an ESP8266 WiFi module for telemetry in Paparazz
 ## Required tools
 
 - Download the latest stable Arduino IDE from the [Arduino website](http://www.arduino.cc/en/main/software).
-- Enter ```http://arduino.esp8266.com/stable/package_esp8266com_index.json``` into *Additional Board Manager URLs* field. You can add multiple URLs, separating them with commas.
+- Enter ```http://arduino.esp8266.com/stable/package_esp8266com_index.json``` into *Additional Board Manager URLs* field. You can add multiple URLs, separating them with commas. You can find it under File -> Preferences - Settings
 - Open Boards Manager from Tools > Board menu and install *esp8266* platform.
 
 ## Configuring the ESP
