@@ -7,7 +7,7 @@
 <img src="pictures/ESP8266_09_bottom.png"  alt="ESP09 Bottom" height="200" width="200"/>
 <img src="pictures/ESP8266_09_top.png"  alt="ESP09 Top" height="200" width="200"/>
 <img src="pictures/ESP_09_READY.jpg"  alt="ESP09 Assembly" height="200" width="200"/>
-
+<img src="pictures/Finished_patched_ESP_09_a_ESP8266_WiFiModule.jpg"  alt="ESP09 Patched" height="200" width="200"/>
 ## ESP8266 Telemetry
 
 With this firmware, you can use an ESP8266 WiFi module for telemetry in PaparazziUAV. At this moment, it works only as a client that connects to a Hotspot. For example, you can have the ESP module connect to the same router as your computer. Another option is to have a WiFi Dongle in the computer that is configured as a hotspot.
