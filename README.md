@@ -34,7 +34,41 @@ Configuring the ESP
 - Also change the broadcastIP to the broadcast IP in your network. In Linux, you should be able to discover this by executing `ifconfig`. Look for `Bcast:*.*.*.*` for the wireless network interface (something like wlan*).
 
 # Flashing
+
+Basically:
 - Upload the firmware to your ESP8266 by pressing the upload button.
+
+But it needs to be in bootloader mode.. You have to connect GND with GPIO0 _while_ applying power!
+
+## Flashing the firmware UART
+
+The very first time, or if things are screwed up, the firmware needs to be flashed to the pico-esp using UART. Use a **3.3V** USB-to-Serial cable and connect Tx->Rx, Rx->Tx, Gnd->Gnd. 
+
+It is usually better to use an external power source for the 3.3V. The 3.3V USB-to-Serial cables have only 3.3V on Rx and Tx, 
+**the VCC is still 5V from USB which will damage your ESP**
+
+### Pico ESP
+To get the pico-esp in boot-mode, you have to connect GND with GPIO0 _while_ applying power. GPIO0 has no pin on the pico-esp, but just a very small patch at one corner.
+
+<img src="pictures/pico-esp-pins.jpg" alt="Pico-ESP Pins" width="500"/>
+
+When the Pico-ESP is in boot mode, the firmware can be flashed from the Arduino-IDE. See [README.md](https://github.com/paparazzi/esp8266_udp_firmware/blob/master/README.md) for instructions on getting the IDE. Use the following configuration for flashing.
+
+<img src="pictures/arduino_esp_configuration.png" alt="Arduino ESP configuration" width="500"/>
+
+## Updating firmware Over-The-Air
+
+The firmware can be updated over WiFi. This should performed with care!. It is **crucial** to configure the WiFi correctly in the new firmware, otherwise you will not be able to establish a connection with the ESP and you will need to reprogram it over UART.
+
+To update over the air, first you need a firmware image. In the Arduino-IDE, this can be generated from the menu Sketch->Export compiled Binary. This generates a binary image in the folder of the sketch.
+
+In _Client_ mode, the Pico-ESP connects to a router. If your computer is connected to the same network, you can upload the firmware with the following command. This command contains the link to the **espota.py** tool which is part of the ESP Arduino package. The directory might be different on your system. Also update the path to the binary.
+
+`python ~/.arduino15/packages/esp8266/hardware/esp8266/2.1.0/tools/espota.py -i esp-module.local -r -f ~/git/esp8266_udp_firmware/pprz_udp_link/pprz_udp_link.cpp.generic.bin`
+
+If you have configured the Pico-ESP in _AccesPoint_ mode, you can connect to the pico-esp with a laptop. The command is slightly different, since it now contains the IP of the module:
+
+`python ~/.arduino15/packages/esp8266/hardware/esp8266/2.1.0/tools/espota.py -i 192.168.4.1 -r -f ~/git/esp8266_udp_firmware/pprz_udp_link/pprz_udp_link.cpp.generic.bin`
 
 # Airframe
 In your airframe file, put the following configuration within the main AP`<firmware>` section:
