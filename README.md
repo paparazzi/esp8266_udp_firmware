@@ -121,6 +121,5 @@ Instead of flashing the module with a fixed SSID and password, it would be nice 
 
 For more information also take a look at
 
-- Documentation on the PICO-ESP can be found: [ on this PicoESP wiki](https://github.com/paparazzi/esp8266_udp_firmware/wiki).
 - This [ESP8266 SDK project on github](https://github.com/esp8266/Arduino)
 - Information about the ESP8266 chip and arduino tools: [esp8266 wiki](https://github.com/esp8266/esp8266-wiki/wiki)
