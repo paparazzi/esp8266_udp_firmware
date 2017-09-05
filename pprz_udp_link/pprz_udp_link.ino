@@ -8,7 +8,7 @@
 enum wifi_modes {
   WifiModeClient,
   WifiModeAccessPoint
-} wifi_mode = WifiModeAccessPoint;
+} wifi_mode = WIFI_MODE;
 
 #define PPRZ_STX 0x99
 #define LED_PIN 13
@@ -30,15 +30,15 @@ struct normal_parser_t {
   int counter;
   unsigned char sender_id;
   unsigned char msg_id;
-  unsigned char payload[100];
+  unsigned char payload[256];
   unsigned char crc_a;
   unsigned char crc_b;
 };
 
 struct normal_parser_t parser;
 
-char packetBuffer[255]; //buffer to hold incoming packet
-char outBuffer[255];    //buffer to hold outgoing data
+char packetBuffer[256]; //buffer to hold incoming packet
+char outBuffer[256];    //buffer to hold outgoing data
 uint8_t out_idx = 0;
 uint8_t serial_connect_info = 1; // Serial print wifi connection info
 
@@ -47,13 +47,14 @@ WiFiUDP udp;
 IPAddress myIP;
 
 void setup() {
+  Serial.begin(SERIAL_BAUD_RATE);
+  
   wifi_mode = WIFI_MODE;
   delay(1000);
   /* Configure LED */
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  digitalWrite(LED_PIN, LOW);
   
-  Serial.begin(115200);
   if (serial_connect_info) {
     Serial.println();
     Serial.print("Connnecting to ");
@@ -73,6 +74,9 @@ void setup() {
   }
   else {
     /* AccessPoint mode */
+
+    Serial.print("$");
+    
     WiFi.softAP(ssid, password);
     myIP = WiFi.softAPIP();
     /* Reconfigure broadcast IP */
@@ -118,7 +122,7 @@ void setup() {
   ArduinoOTA.begin();
 
   /* Connected, LED ON */
-  digitalWrite(LED_PIN, HIGH);  
+  digitalWrite(LED_PIN, HIGH);
 }
 
 void loop() {
@@ -138,17 +142,20 @@ void loop() {
   /* Check for Serial data from drone */
   /* Put all serial in_bytes in a buffer */
   while(Serial.available() > 0) {
-    digitalWrite(LED_PIN, LOW);
+    //digitalWrite(LED_PIN, LOW);
     unsigned char inbyte = Serial.read();
     if (parse_single_byte(inbyte)) { // if complete message detected
       udp.beginPacketMulticast(broadcastIP, txPort, myIP);
       udp.write(outBuffer, out_idx);
       udp.endPacket();
+      digitalWrite(LED_PIN, !digitalRead(LED_PIN));
     }
   }
   
-  delay(10);
-  digitalWrite(LED_PIN, HIGH);
+  //delay(10);
+  //digitalWrite(LED_PIN, HIGH);
+
+
 }
 
 /*
