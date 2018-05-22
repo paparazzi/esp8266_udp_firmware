@@ -19,11 +19,11 @@ enum wifi_modes {
 #define PPRZ_STX 0x99
 
 #ifdef PPRZLINK_1_GEC
-#error PPRZLINK v1 encryped link is not supported, consider using WiFi encryption
+#error PPRZLINK v1 encryped link is not supported, consider using standard WiFi encryption
 #endif // PPRZLINK 1.0 encrypted
 
 #ifdef PPRZLINK_2_GEC
-#error PPRZLINK v2 encryped link is not supported, consider using WiFi encryption
+#error PPRZLINK v2 encryped link is not supported, consider using standard WiFi encryption
 #endif // PPRZLINK 2.0 encrypted
 
 #ifndef PPRZLINK_1
@@ -36,10 +36,10 @@ enum wifi_modes {
 enum normal_parser_states {
   SearchingPPRZ_STX,
   ParsingLength,
-  ParsingSenderId,  //Source in case of v2
+  ParsingSenderId,  //Sidenote: This is called the Source in case of v2
 #ifdef PPRZLINK_2
   ParsingDestination,
-  ParsingClassAndComponent,
+  ParsingClassIdAndComponentId,
 #endif
   ParsingMsgId,
   ParsingMsgPayload,
@@ -54,7 +54,8 @@ struct normal_parser_t {
   unsigned char sender_id; //Note that Source is the official PPRZLink v2 name
 #ifdef PPRZLINK_2
   unsigned char destination;
-  unsigned char class_and_component;
+  unsigned char class_id; //HiNibble 4 bits
+  unsigned char component_id; //LowNibble 4 bits
 #endif
   unsigned char msg_id;
   unsigned char payload[256];
@@ -62,7 +63,7 @@ struct normal_parser_t {
   unsigned char crc_b;
 };
 #else
-#error one must define PPRZLINK_1 or PPRZLINK_2
+#error One must define PPRZLINK_1 or PPRZLINK_2 and that is not the case
 #endif
 
 struct normal_parser_t parser;
@@ -70,7 +71,7 @@ struct normal_parser_t parser;
 char packetBuffer[256]; //buffer to hold incoming packet
 char outBuffer[256];    //buffer to hold outgoing data
 uint8_t out_idx = 0;
-uint8_t serial_connect_info = 1; // Serial print wifi connection info
+uint8_t serial_connect_info = 1; //If 1 then spit out serial print wifi connection info for debugging purposes
 
 WiFiUDP udp;
 
@@ -80,7 +81,7 @@ void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
   
   wifi_mode = WIFI_MODE;
-  delay(1000);
+  delay(1000); //A 1s delay, sorry but breathing room to make sure all is set en done
   /* Configure LED */
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
@@ -123,7 +124,7 @@ void setup() {
 #ifdef ENABLE_OTA_UPDATE
   /* OTA Configuration */
 
-  // Port defaults to 8266
+  // Port defaults to 8266, change this if you want to heve it your way...
   // ArduinoOTA.setPort(8266);
 
   // Hostname defaults to esp8266-[ChipID]
@@ -166,7 +167,7 @@ void loop() {
   /* Check for UDP data from host */
   int packetSize = udp.parsePacket();
   int len = 0;
-  if(packetSize) { /* data received on udp line*/
+  if(packetSize > 0) { /* data received on udp line*/
     // read the packet into packetBufffer
     len = udp.read(packetBuffer, 255);
     Serial.write(packetBuffer, len);
@@ -272,11 +273,12 @@ uint8_t parse_single_byte(unsigned char in_byte)
       parser.crc_a += in_byte;
       parser.crc_b += parser.crc_a;
       parser.counter++;
-      parser.state = ParsingClassAndComponent;
+      parser.state = ParsingClassIdAndComponentId;
       break;
   
-    case ParsingClassAndComponent:
-      parser.class_and_component = in_byte;
+    case ParsingClassIdAndComponentId:
+      parser.class_id = ((byte)in_byte & 0xf0) >> 4; //HiNibble 1st4 bits
+      parser.component_id = (byte)in_byte & 0x0f; //LoNibble last 1st4 bits
       parser.crc_a += in_byte;
       parser.crc_b += parser.crc_a;
       parser.counter++;
@@ -348,6 +350,8 @@ uint8_t parse_single_byte(unsigned char in_byte)
                parser.msg_id,
                parser.sender_id,
                parser.destination,
+               parser.class_id,
+               parser.component_id,
                parser.length,
                parser.payload[0]);*/
         //printf("Request confirmed\n");

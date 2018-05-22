@@ -1,22 +1,24 @@
-/* Configure the network you want to connect to. */
+/* Here you can configure how or to what the network you want to connect to.
+ * Also the Serial Datarate and which PPRZ Link version you wan to use */
 
-#define WIFI_MODE WifiModeAccessPoint;  // Either WifiModeClient or WifiModeAccessPoint
-//#define WIFI_MODE WWifiModeClient;    // Enable to connect to a router
-//#define WIFI_MODE WWifiModeMesh;      // NIY
-
-//const char *ssid = "OpenWRT"; //Your router SSID when using WifiModeClient
-const char *ssid = "MyFlyingThing"; //Change to whatever you fancy...
-//const char *password = ""; // In AccessPoint Mode, must be AT LEAST 8 characters long.
-const char *password = "1234567890"; // In AccessPoint Mode, must be AT LEAST 8 characters long.
+//#define WIFI_MODE WifiModeClient; // Uncomment this line and reflash the module to connect to a router
+/* TIP: The broadcast IP, can be obtained with the ifconfig command in Linux */
+IPAddress broadcastIP(192,168,1,255);// Only of use in WifiModeClient
+//----------------------------------------
+#ifndef WIFI_MODE
+#define WIFI_MODE WifiModeAccessPoint;
+const char *ssid = "CrazyFlie2Wifi"; //Change to whatever you fancy...
+const char *password = "1234567890"; // In AccessPoint Mode, must be AT LEAST 8 characters long
+#else
+const char *ssid = "OpenWRT"; //The SSID must match that of your routers SSID when using WifiModeClient
+const char *password = "admin";
+#endif
 
 #define SERIAL_BAUD_RATE 115200
 //#define SERIAL_BAUD_RATE 921600 //The need for speed...
 
 /* If one want to use PPRZLink v1 uncomnent this line below */
 //#define PPRZLINK_1
-
-/* The broadcast IP, can be obtained with the ifconfig command in Linux */
-IPAddress broadcastIP(192,168,1,255); // Only required in WifiModeClient
 
 /* Port config; 4243 and 4242 are default for pprz udp */
 unsigned int localPort = 4243; // port to listen on
