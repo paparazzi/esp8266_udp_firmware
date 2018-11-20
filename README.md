@@ -14,7 +14,8 @@ To make the modification one nees some 0402 SMD components:
 
 To create the module just buy a regular ESP09 module, available from many suppliers.
 
-<img src="pictures/ESP_09_READY.jpg"  alt="ESP09 Assembly" height="200" width="200"/>
+<img src="pictures/ESP_09_READY.jpg"  alt="ESP09 Assembly" height="200" width="200"/> 
+<img src="pictures/ESP_09_READY_Zoomed.jpg"  alt="ESP09 Assembly Zoomedin" height="200" width="200"/>
 <img src="pictures/Finished_patched_ESP_09_a_ESP8266_WiFiModule.jpg"  alt="ESP09 Patched" height="200" width="200"/>
 
 ## Pinouts
