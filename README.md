@@ -1,6 +1,6 @@
 # About
 
-With this firmware, you can use an ESP8266 WiFi module for telemetry icw a UAS that runs Paparazzi autopilot code. To connect there are two option. The frist is that the module can work as a client that connects to a Hotspot. For example, you can have the ESP module connect to the a same router as your computer. The second option is to set it up as a Router itself, then just connect your PC to this module, just select SSID you gave it.
+With this firmware, you can use an ESP8266 WiFi module for telemetry icw an UAS that runs Paparazzi autopilot code. To connect there are two option. The first is that the module can work as a client that connects to a Hotspot. For example, you can have the ESP module connect to the a same router as your computer. The second option is to set it up as a Router itself, then just connect your groundstation PC to this module.
 
 # BOM
 
@@ -12,7 +12,7 @@ To make the modification one nees some 0402 SMD components:
 
 # Building
 
-To create the module just buy a regular ESP09 module, available from many suppliers.
+To create the module just buy a regular ESP09 module, available from many suppliers. Add (kapton) tape in the middle of the bottom of the module. It is the yellowishbrown square in the middle of the PCB. Prevents shorting on the four ground pads. Us skill and patience and solder the resistors and LED and I/O wires.
 
 <img src="pictures/ESP_09_READY.jpg"  alt="ESP09 Assembly" height="200" width="200"/> 
 <img src="pictures/ESP_09_READY_Zoomed.jpg"  alt="ESP09 Assembly Zoomedin" height="200" width="200"/>
