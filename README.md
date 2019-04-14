@@ -126,6 +126,10 @@ Well, yes it is a opensource wiki and project. If you feel something is lacking,
 
 Instead of flashing the module with a fixed SSID and password, it would be nice to have this configurable from the autopilot. Upon startup, the ESP8266 could send out requests for the SSID and password. A module within PPRZ could react by providing this in a PPRZ message format.
 
+# More Space
+
+If the tiny flash chip does not have enough storage for your gusto,[this 2MB is compatible with the ESP8266](https://www.digikey.com/product-detail/en/macronix/MX25R1635FZUIH0/1092-1178-1-ND/5957749). Not needed for this project, but if you are building your own, a nice alternative.
+
 # Links
 
 For more information also take a look at
