@@ -6,6 +6,11 @@
 #include <ArduinoOTA.h>
 #endif
 
+#include <Wire.h>
+#include <VL53L0X.h> // POLULU library
+
+VL53L0X sensor;
+
 /* Struct with available modes */
 enum wifi_modes {
   WifiModeClient,
@@ -79,6 +84,10 @@ IPAddress myIP;
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
+
+  Wire.begin();
+  sensor.init();
+  sensor.setTimeout(500);
   
   wifi_mode = WIFI_MODE;
   delay(1000); //A 1s delay, sorry but breathing room to make sure all is set en done
@@ -155,6 +164,9 @@ void setup() {
 #endif
   /* Connected, LED ON */
   digitalWrite(LED_PIN, HIGH);
+
+  /* Start measuring range */
+  sensor.startContinuous();
 }
 
 void loop() {
@@ -163,6 +175,14 @@ void loop() {
   /* Check for OTA */
   ArduinoOTA.handle();
 #endif
+
+  /* Every fifth cycle, send sonar data */
+  static uint8_t sonar_cnt = 0;
+  if (sonar_cnt == 5) {
+    sonar_cnt = 0;
+    send_sonar_data();
+  }
+  ++sonar_cnt;
 
   /* Check for UDP data from host */
   int packetSize = udp.parsePacket();
@@ -372,4 +392,57 @@ uint8_t parse_single_byte(unsigned char in_byte)
   
   outBuffer[out_idx++] = in_byte;
   return 0;
+}
+
+uint8_t sonar_crc_a;
+uint8_t sonar_crc_b;
+
+uint8_t sonar_byte(uint8_t in_byte) {
+  sonar_crc_a += in_byte;
+  sonar_crc_b += sonar_crc_a;
+  return in_byte;
+}
+
+/** Read and send magneto message
+ *  This is hacked into the HTIL_INFRARED messages
+ *  which is almost perfect in data types.
+ * 
+ * PPRZ-message: ABCxxxxxxxDE
+    A PPRZ_STX (0x99)
+    B LENGTH (A->E)
+    C PPRZ_DATA
+      0 SENDER_ID
+      1 MSG_ID
+      2 MSG_PAYLOAD
+      . DATA (messages.xml)
+    D PPRZ_CHECKSUM_A (sum[B->C])
+    E PPRZ_CHECKSUM_B (sum[ck_a])
+ */
+#define SONAR_MSG_LENGTH 6+6
+void send_sonar_data(){
+  uint8_t sonar_msg[SONAR_MSG_LENGTH]; // length
+  sonar_crc_a = 0;
+  sonar_crc_b = 0;
+
+  sonar_msg[0] = PPRZ_STX;
+  sonar_msg[1] = sonar_byte(SONAR_MSG_LENGTH); // MSG LENGTH
+  sonar_msg[2] = sonar_byte(0); // SENDER ID
+  sonar_msg[3] = sonar_byte(236); // MSG SONAR
+
+  uint16_t millimeters = sensor.readRangeContinuousMillimeters();
+  uint8_t msb = (millimeters >> 8);
+  uint8_t lsb = (millimeters & 0xFF);
+
+  sonar_msg[4] = sonar_byte(msb);         // MSB
+  sonar_msg[5] = sonar_byte(lsb);         // LSB
+  sonar_msg[6] = 0;
+  sonar_msg[7] = 0;
+  sonar_msg[8] = 0;
+  sonar_msg[9] = 0;
+
+  sonar_msg[10] = sonar_crc_a;
+  sonar_msg[11] = sonar_crc_b;
+
+  Serial.write(sonar_msg, SONAR_MSG_LENGTH);
+
 }
