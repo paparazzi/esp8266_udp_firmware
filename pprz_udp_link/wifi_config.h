@@ -7,7 +7,7 @@ IPAddress broadcastIP(192,168,1,255);// Only of use in WifiModeClient
 //----------------------------------------
 #ifndef WIFI_MODE
 #define WIFI_MODE WifiModeAccessPoint;
-const char *ssid = "CrazyFlie2Wifi"; //Change to whatever you fancy...
+const char *ssid = "Trashcan"; //Change to whatever you fancy...
 const char *password = "1234567890"; // In AccessPoint Mode, must be AT LEAST 8 characters long
 #else
 const char *ssid = "OpenWRT"; //The SSID must match that of your routers SSID when using WifiModeClient

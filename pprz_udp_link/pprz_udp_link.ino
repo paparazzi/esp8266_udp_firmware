@@ -418,7 +418,7 @@ uint8_t sonar_byte(uint8_t in_byte) {
     D PPRZ_CHECKSUM_A (sum[B->C])
     E PPRZ_CHECKSUM_B (sum[ck_a])
  */
-#define SONAR_MSG_LENGTH 6+6
+#define SONAR_MSG_LENGTH 6+6+2
 void send_sonar_data(){
   uint8_t sonar_msg[SONAR_MSG_LENGTH]; // length
   sonar_crc_a = 0;
@@ -426,22 +426,25 @@ void send_sonar_data(){
 
   sonar_msg[0] = PPRZ_STX;
   sonar_msg[1] = sonar_byte(SONAR_MSG_LENGTH); // MSG LENGTH
-  sonar_msg[2] = sonar_byte(0); // SENDER ID
-  sonar_msg[3] = sonar_byte(236); // MSG SONAR
+  sonar_msg[2] = sonar_byte(4); // SENDER ID
+  sonar_msg[3] = sonar_byte(0);
+  sonar_msg[4] = sonar_byte(1);
+  sonar_msg[5] = sonar_byte(236); // MSG SONAR
 
   uint16_t millimeters = sensor.readRangeContinuousMillimeters();
+  //uint16_t millimeters = 1000;
   uint8_t msb = (millimeters >> 8);
   uint8_t lsb = (millimeters & 0xFF);
 
-  sonar_msg[4] = sonar_byte(msb);         // MSB
-  sonar_msg[5] = sonar_byte(lsb);         // LSB
-  sonar_msg[6] = 0;
-  sonar_msg[7] = 0;
-  sonar_msg[8] = 0;
-  sonar_msg[9] = 0;
+  sonar_msg[6] = sonar_byte(msb);         // MSB
+  sonar_msg[7] = sonar_byte(lsb);         // LSB
+  sonar_msg[8] = sonar_byte(0);
+  sonar_msg[9] = sonar_byte(0);
+  sonar_msg[10] = sonar_byte(0);
+  sonar_msg[11] = sonar_byte(0);
 
-  sonar_msg[10] = sonar_crc_a;
-  sonar_msg[11] = sonar_crc_b;
+  sonar_msg[12] = sonar_crc_a;
+  sonar_msg[13] = sonar_crc_b;
 
   Serial.write(sonar_msg, SONAR_MSG_LENGTH);
 
