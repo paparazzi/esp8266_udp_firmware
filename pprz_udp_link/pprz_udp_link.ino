@@ -245,6 +245,7 @@ void loop() {
     Returns 0 if not ready, return 1 if complete message was detected
 */
 
+uint8_t class_componenent_raw;
 uint8_t parse_single_byte(unsigned char in_byte)
 {
 
@@ -297,6 +298,7 @@ uint8_t parse_single_byte(unsigned char in_byte)
       break;
   
     case ParsingClassIdAndComponentId:
+      class_componenent_raw = in_byte;
       parser.class_id = ((byte)in_byte & 0xf0) >> 4; //HiNibble 1st4 bits
       parser.component_id = (byte)in_byte & 0x0f; //LoNibble last 1st4 bits
       parser.crc_a += in_byte;
@@ -426,9 +428,9 @@ void send_sonar_data(){
 
   sonar_msg[0] = PPRZ_STX;
   sonar_msg[1] = sonar_byte(SONAR_MSG_LENGTH); // MSG LENGTH
-  sonar_msg[2] = sonar_byte(4); // SENDER ID
-  sonar_msg[3] = sonar_byte(0);
-  sonar_msg[4] = sonar_byte(1);
+  sonar_msg[2] = sonar_byte(parser.sender_id); // SENDER ID
+  sonar_msg[3] = sonar_byte(parser.destination);
+  sonar_msg[4] = sonar_byte(class_componenent_raw);
   sonar_msg[5] = sonar_byte(236); // MSG SONAR
 
   uint16_t millimeters = sensor.readRangeContinuousMillimeters();
