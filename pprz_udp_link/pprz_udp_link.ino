@@ -85,9 +85,9 @@ IPAddress myIP;
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
 
-  Wire.begin();
+  Wire.begin(0,2);
   sensor.init();
-  sensor.setTimeout(500);
+  sensor.setTimeout(50);
   
   wifi_mode = WIFI_MODE;
   delay(1000); //A 1s delay, sorry but breathing room to make sure all is set en done
@@ -165,8 +165,22 @@ void setup() {
   /* Connected, LED ON */
   digitalWrite(LED_PIN, HIGH);
 
-  /* Start measuring range */
-  sensor.startContinuous();
+  /* Sensor Configuration */
+#if defined LONG_RANGE
+  // lower the return signal rate limit (default is 0.25 MCPS)
+  sensor.setSignalRateLimit(0.1);
+  // increase laser pulse periods (defaults are 14 and 10 PCLKs)
+  sensor.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
+  sensor.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
+#endif
+
+#if defined HIGH_SPEED
+  // reduce timing budget to 20 ms (default is about 33 ms)
+  sensor.setMeasurementTimingBudget(20000);
+#elif defined HIGH_ACCURACY
+  // increase timing budget to 200 ms
+  sensor.setMeasurementTimingBudget(200000);
+#endif
 }
 
 void loop() {
@@ -428,13 +442,17 @@ void send_sonar_data(){
 
   sonar_msg[0] = PPRZ_STX;
   sonar_msg[1] = sonar_byte(SONAR_MSG_LENGTH); // MSG LENGTH
-  sonar_msg[2] = sonar_byte(parser.sender_id); // SENDER ID
-  sonar_msg[3] = sonar_byte(parser.destination);
+  sonar_msg[2] = sonar_byte(parser.destination); // SENDER ID (reversed direction)
+  sonar_msg[3] = sonar_byte(parser.sender_id); // destination is source
   sonar_msg[4] = sonar_byte(class_componenent_raw);
   sonar_msg[5] = sonar_byte(236); // MSG SONAR
 
-  uint16_t millimeters = sensor.readRangeContinuousMillimeters();
+  uint16_t millimeters = sensor.readRangeSingleMillimeters();
   //uint16_t millimeters = 1000;
+  //Serial.println(millimeters);
+  //if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+
+  
   uint8_t msb = (millimeters >> 8);
   uint8_t lsb = (millimeters & 0xFF);
 

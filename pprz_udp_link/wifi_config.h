@@ -25,7 +25,7 @@ unsigned int localPort = 4243; // port to listen on
 unsigned int txPort    = 4242; // port to transmit data on
 
 /* To enable Over The Air (OTA) update, uncommet the line below */
-#define ENABLE_OTA_UPDATE //WIP: when commented out, no over the air update possible
+//#define ENABLE_OTA_UPDATE //WIP: when commented out, no over the air update possible
 
 /* To update your firmware Over The Air (OTA), then use this update command on
  * your local machine:
@@ -34,3 +34,22 @@ unsigned int txPort    = 4242; // port to transmit data on
 
  if you have a newer Esspressif IFD replace 2.1.0 with something else. Note that your bin file can reside in some other directory too
 */
+
+// For the range sensor
+
+// Uncomment this line to use long range mode. This
+// increases the sensitivity of the sensor and extends its
+// potential range, but increases the likelihood of getting
+// an inaccurate reading because of reflections from objects
+// other than the intended target. It works best in dark
+// conditions.
+
+//#define LONG_RANGE
+
+
+// Uncomment ONE of these two lines to get
+// - higher speed at the cost of lower accuracy OR
+// - higher accuracy at the cost of lower speed
+
+//#define HIGH_SPEED
+//#define HIGH_ACCURACY
