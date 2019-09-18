@@ -10,6 +10,8 @@ To make the modification one nees some 0402 SMD components:
 - 1x 1k  Resistor
 - 1x     Blue LED 
 
+Optionally a 5v to 3.3v small power converter can be added if one want to power it risk free
+
 # Building
 
 To create the module just buy a regular ESP09 module, available from many suppliers. Add (kapton) tape in the middle of the bottom of the module. It is the yellowishbrown square in the middle of the PCB. Prevents shorting on the four ground pads. Us skill and patience and solder the resistors and LED and I/O wires.
