@@ -1,16 +1,21 @@
 # About
-
+0
 With this firmware, you can use an ESP8266 WiFi module for telemetry icw an UAS that runs Paparazzi autopilot code. To connect there are two option. The first is that the module can work as a client that connects to a Hotspot. For example, you can have the ESP module connect to the a same router as your computer. The second option is to set it up as a Router itself, then just connect your groundstation PC to this module.
 
 # BOM
 
 To make the modification one nees some 0402 SMD components:
 
-- 5x 4k7 Resistor
-- 1x 1k  Resistor
-- 1x     Blue LED 
+- 5x 4k7 Resistor  (Farnell )
+- 1x 1k  Resistor  (Farnell )
 
-Optionally a 5v to 3.3v small power converter can be added if one want to power it risk free
+Optionally:
+- 1x     Blue LED  (Farnell ) (optional)
+- 1x     Voltage regulator 
+
+Voltage regulator can be added if one want to power it risk free
+TPS70933DBVT Fixed LDO Voltage Regulator, 2.7V to 30V, 960mV Dropout, 3.3Vout, 150mAout, SOT-23-5 
+(Farnell 2382995)
 
 # Building
 
