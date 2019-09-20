@@ -6,16 +6,17 @@ With this firmware, you can use an ESP8266 WiFi module for telemetry icw an UAS 
 
 To make the modification one nees some 0402 SMD components:
 
-- 5x 4k7 Resistor  (Farnell )
-- 1x 1k  Resistor  (Farnell )
+- 5x 4k7 Resistor
+- 1x 1k  Resistor
 
 Optionally:
-- 1x     Blue LED  (Farnell ) (optional)
-- 1x     Voltage regulator 
+To give a hint about the status of the ESP and the data a LED comes in handy
+- 1x     Blue LED  (Farnell ?)
 
-Voltage regulator can be added if one want to power it risk free
+Voltage regulator can be added if one wants to power the ESP in a more risk free way
+- 1x     Voltage regulator (Farnell ?) 
+
 TPS70933DBVT Fixed LDO Voltage Regulator, 2.7V to 30V, 960mV Dropout, 3.3Vout, 150mAout, SOT-23-5 
-(Farnell 2382995)
 
 # Building
 
@@ -71,6 +72,16 @@ To get the pico-esp in boot-mode, you have to connect GND with GPIO0 _while_ app
 When the Pico-ESP is in boot mode, the firmware can be flashed from the Arduino-IDE. See [README.md](https://github.com/paparazzi/esp8266_udp_firmware/blob/master/README.md) for instructions on getting the IDE. Use the following configuration for flashing.
 
 <img src="pictures/arduino_esp_configuration.png" alt="Arduino ESP configuration" width="500"/>
+
+## External IO
+
+Sometimes an flightcontrolle board does not have enought IO pins left. To still be able to use more sensor the IO of the IO pins of the ESP8266 can be used. Then one is still able to read the sensor data. Data from these sensors will be injected into the regular datastream on PPRZlink going to FC. For this one has to enable the sensor in the setting file.
+
+The current code supports a magnetometer or a ranging sensor. It is possible to add different sensors, one has to add support to the code.
+
+### Connecting
+
+Lots of sensors have an I2C bus for IO. This will be used. Connect GND, VCC to respective ports on PCB and connect SCA of sensor to GPIO2 and SCL to GPIO4 of main PCB
 
 ## Updating firmware Over-The-Air
 
